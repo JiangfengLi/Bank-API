@@ -127,14 +127,14 @@ class Transfer(Resource):
 
         username = postedData["username"]
         password = postedData["password"]
-        to = postedData["to"]
+        receiver = postedData["receiver"]
         amount = postedData["amount"]
 
         retJson, error = verifyCredentials(username, password)
         if error:
             return retJson
 
-        if not UserExist(to):
+        if not UserExist(receiver):
             return returnState(301, "Receiver username is invalid")
 
         #Verify user want legal money
@@ -142,15 +142,15 @@ class Transfer(Resource):
             return returnState(304, "The money amount entered must be greater than 0!")
 
         cash_from = cashWithUser(username)
-        if cash_from<=0:
+        if cash_from<=0 or cash_from<amount+1:
             return returnState(304, "You're out of money, please add or take a loan")
 
-        cash_to = cashWithUser(to)
+        cash_to = cashWithUser(receiver)
         bank_cash = cashWithUser("BANK")
 
         updateAccount("BANK", bank_cash+1)
-        updateAccount(username, cash_from-amount)
-        updateAccount(to, cash_to + amount - 1)
+        updateAccount(username, cash_from-amount-1)
+        updateAccount(receiver, cash_to + amount)
 
         return returnState(200, "Amount Transfered successfully!")
 
