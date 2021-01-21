@@ -108,7 +108,7 @@ class Add(Resource):
         if error:
             return retJson
 
-        #Verify user want legal money
+        #Verify user store legal money
         if amount <= 0:
             return returnState(304, "The money amount entered must be greater than 0!")
 
@@ -117,6 +117,32 @@ class Add(Resource):
         bank_cash = cashWithUser("BANK")
         updateAccount("BANK", bank_cash+1)
         updateAccount(username, cash+amount)
+
+        return returnState(200, "Amount added successfully to account!")
+
+class Withdraw(Resource):
+    def post(self):
+        postedData = request.get_json()
+
+        username = postedData["username"]
+        password = postedData["password"]
+        amount = postedData["amount"]
+
+        retJson, error = verifyCredentials(username, password)
+        if error:
+            return retJson
+
+        #Verify user withdraw legal money
+        if amount<=0:
+            return returnState(304, "Illegal amount!")
+
+        cash = cashWithUser(username)
+        if amount > cash-1:
+            return returnState(304, "Insufficient money!")
+
+        bank_cash = cashWithUser("BANK")
+        updateAccount("BANK", bank_cash+1)
+        updateAccount(username, cash - amount - 1)
 
         return returnState(200, "Amount added successfully to account!")
 
@@ -235,6 +261,7 @@ class PayLoan(Resource):
 
 api.add_resource(Register, '/register')
 api.add_resource(Add, '/add')
+api.add_resource(Withdraw, '/withdraw')
 api.add_resource(Transfer, '/transfer')
 api.add_resource(Balance, '/balance')
 api.add_resource(TakeLoan, '/takeLoan')
