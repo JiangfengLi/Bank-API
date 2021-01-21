@@ -144,7 +144,7 @@ class Withdraw(Resource):
         updateAccount("BANK", bank_cash+1)
         updateAccount(username, cash - amount - 1)
 
-        return returnState(200, "Amount added successfully to account!")
+        return returnState(200, "Amount withdrawed successfully from your account!")
 
 
 class Transfer(Resource):
