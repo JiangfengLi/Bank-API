@@ -143,7 +143,7 @@ class Transfer(Resource):
 
         cash_from = cashWithUser(username)
         if cash_from<=0 or cash_from<amount+1:
-            return returnState(304, "You're out of money, please add or take a loan")
+            return returnState(304, "You're out of money, please add more or take a loan")
 
         cash_to = cashWithUser(receiver)
         bank_cash = cashWithUser("BANK")
